@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#090b0f">
+<title>StokvelBoss — Dashboard</title>
+<style>
+:root{
+  --bg:#07090c;
+  --surface:#11151b;
+  --surface2:#151a21;
+  --surface3:#0d1116;
+  --line:#29313c;
+  --text:#f2f3f5;
+  --muted:#a7afbd;
+  --gold:#f7c542;
+  --gold2:#ffca28;
+  --danger:#e85c5c;
+  --ok:#35d07f;
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:active{transform:scale(.98)}
+.hidden{display:none!important}
+
+/* ---------- APP SHELL ---------- */
+.app{
+  min-height:100vh;
+  max-width:1180px;
+  margin:auto;
+  padding:18px 24px 35px;
+}
+.header{
+  height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:28px;
+}
+.logo-link{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  text-decoration:none;
+  color:var(--text);
+  cursor:pointer;
+  margin-left:auto;
+}
+.logo-mark{
+  width:51px;
+  height:51px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:var(--gold);
+  color:#111;
+  font-size:17px;
+  font-weight:1000;
+  box-shadow:0 5px 18px rgba(247,197,66,.12);
+}
+.logo-text{
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.035em;
+}
+.logo-text span{color:var(--gold)}
+
+.hamburger{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--text);
+  display:grid;
+  place-items:center;
+  padding:0;
+}
+.hamburger-lines{width:25px}
+.hamburger-lines i{
+  display:block;
+  height:3px;
+  border-radius:5px;
+  background:var(--text);
+  margin:5px 0;
+}
+
+/* ---------- DRAWER ---------- */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.67);
+  z-index:90;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+}
+.overlay.show{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;
+  z-index:100;
+  top:12px;
+  left:12px;
+  bottom:12px;
+  width:min(330px,calc(100vw - 24px));
+  background:#0f1319;
+  border:1px solid #35404d;
+  border-radius:22px;
+  box-shadow:0 25px 70px rgba(0,0,0,.6);
+  transform:translateX(-115%);
+  transition:.25s ease;
+  padding:18px;
+  overflow:auto;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-bottom:17px;
+}
+.drawer-title{
+  font-size:18px;
+  font-weight:900;
+}
+.close-menu{
+  width:40px;
+  height:40px;
+  border:0;
+  background:transparent;
+  color:var(--gold);
+  font-size:31px;
+  line-height:1;
+}
+.drawer-rule{
+  height:1px;
+  background:#252d37;
+  margin:10px 0 12px;
+}
+.drawer-item{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  padding:14px 8px;
+  border-radius:11px;
+  text-align:left;
+  font-size:15px;
+}
+.drawer-item:hover{background:#191e25}
+.drawer-icon{
+  width:30px;
+  text-align:center;
+  font-size:20px;
+}
+.drawer-item.gold .drawer-icon{color:var(--gold)}
+.drawer-note{
+  margin-top:20px;
+  padding:13px;
+  background:#151a21;
+  border:1px solid #29313c;
+  border-radius:13px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  background:
+    radial-gradient(circle at 50% -20%,rgba(247,197,66,.07),transparent 40%),
+    linear-gradient(145deg,#131820,#0f1318);
+  border:1px solid #303945;
+  border-radius:24px;
+  min-height:330px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:42px 25px;
+  position:relative;
+  overflow:hidden;
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:auto -10% -70% -10%;
+  height:250px;
+  background:radial-gradient(ellipse,rgba(247,197,66,.035),transparent 65%);
+}
+.hero-inner{position:relative;z-index:1;max-width:750px}
+.hero-crown{
+  color:var(--gold);
+  font-size:48px;
+  line-height:1;
+  margin-bottom:4px;
+  filter:drop-shadow(0 4px 15px rgba(247,197,66,.15));
+}
+.hero h1{
+  font-size:clamp(32px,5vw,52px);
+  letter-spacing:-.045em;
+  margin:0 0 11px;
+  line-height:1.05;
+}
+.hero p{
+  color:var(--muted);
+  font-size:clamp(16px,2vw,21px);
+  line-height:1.5;
+  margin:0 auto 26px;
+  max-width:670px;
+}
+.primary{
+  background:var(--gold);
+  color:#111;
+  border:0;
+  border-radius:13px;
+  padding:14px 24px;
+  font-weight:900;
+  box-shadow:0 8px 24px rgba(247,197,66,.12);
+}
+.primary:hover{background:var(--gold2)}
+.secondary{
+  background:#171c23;
+  color:var(--text);
+  border:1px solid #303945;
+  border-radius:12px;
+  padding:11px 15px;
+  font-weight:750;
+}
+
+/* ---------- CIRCULAR NAV ---------- */
+.section-nav{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+  margin:28px 0 36px;
+}
+.nav-circle{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  min-width:0;
+  text-align:center;
+  padding:0;
+}
+.circle{
+  width:82px;
+  height:82px;
+  max-width:100%;
+  aspect-ratio:1;
+  margin:0 auto 9px;
+  border-radius:50%;
+  border:1px solid #3a4552;
+  background:#0e1319;
+  display:grid;
+  place-items:center;
+  font-size:29px;
+  transition:.2s;
+}
+.nav-circle.active .circle{
+  border:2px solid var(--gold);
+  color:var(--gold);
+  box-shadow:0 0 0 4px rgba(247,197,66,.03);
+}
+.nav-label{
+  display:block;
+  font-size:13px;
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.nav-circle.active .nav-label{color:var(--gold)}
+
+/* ---------- SECTIONS ---------- */
+.section{
+  display:none;
+  animation:fade .18s ease;
+}
+.section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.get-started,
+.content-card{
+  background:linear-gradient(145deg,#131820,#10141a);
+  border:1px solid #2b3541;
+  border-radius:22px;
+  padding:26px;
+  margin-bottom:18px;
+}
+.card-heading h2,.card-heading h3{margin:0 0 6px;font-size:25px;letter-spacing:-.025em}
+.card-heading p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
+.get-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:21px;
+}
+.start-card{
+  border:1px solid #303b48;
+  background:#131922;
+  border-radius:18px;
+  min-height:128px;
+  padding:19px 13px;
+  text-align:center;
+  color:var(--text);
+}
+.start-card:hover{border-color:#556171}
+.start-icon{
+  color:var(--gold);
+  font-size:30px;
+  line-height:1;
+  margin-bottom:9px;
+}
+.start-card strong{display:block;font-size:16px;margin-bottom:4px}
+.start-card span{display:block;color:var(--muted);font-size:12px}
+
+.empty-card{
+  background:linear-gradient(145deg,#131820,#10141a);
+  border:1px solid #2b3541;
+  border-radius:22px;
+  padding:28px;
+  text-align:left;
+  position:relative;
+  min-height:220px;
+}
+.empty-card h2{margin:0 0 7px;font-size:24px}
+.empty-card p{color:var(--muted);max-width:650px;line-height:1.55;margin:0 0 20px}
+.bee-float{
+  position:absolute;
+  right:25px;
+  bottom:18px;
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  background:var(--gold);
+  display:grid;
+  place-items:center;
+  color:#111;
+  font-size:42px;
+  border:4px solid #111820;
+  box-shadow:0 8px 30px rgba(247,197,66,.15);
+}
+
+/* ---------- REAL DASHBOARD ---------- */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:0 0 18px;
+}
+.stat{
+  background:#11161d;
+  border:1px solid #29323d;
+  border-radius:16px;
+  padding:17px;
+}
+.stat small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.stat strong{display:block;font-size:25px;margin:5px 0}
+.stat span{font-size:12px;color:var(--muted)}
+.two-col{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.panel{
+  background:#11161d;
+  border:1px solid #29323d;
+  border-radius:17px;
+  padding:18px;
+}
+.panel h3{margin:0 0 10px}
+.muted{color:var(--muted)}
+.progress{
+  height:9px;
+  background:#282f38;
+  border-radius:20px;
+  overflow:hidden;
+  margin:13px 0 8px;
+}
+.progress span{display:block;height:100%;background:var(--gold);border-radius:20px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+  display:inline-flex;
+  padding:6px 9px;
+  border-radius:8px;
+  background:#181e25;
+  color:#dfe3e8;
+  font-size:12px;
+}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- TABLES / FORMS ---------- */
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:17px;
+}
+.section-head h2{margin:0;font-size:25px}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.input,.select,.textarea{
+  width:100%;
+  padding:11px 12px;
+  background:#0b0f14;
+  color:var(--text);
+  border:1px solid #303945;
+  border-radius:11px;
+  outline:0;
+}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--gold)}
+.search{max-width:300px}
+.mobile-table{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:12px 8px;text-align:left;border-bottom:1px solid #252d37;white-space:nowrap}
+th{font-size:10px;text-transform:uppercase;color:var(--muted)}
+.badge{display:inline-block;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:850}
+.badge.paid{background:#0d2a1b;color:var(--ok)}
+.badge.unpaid{background:#301518;color:#ff8585}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.member-card{
+  background:#11161d;
+  border:1px solid #29323d;
+  border-radius:15px;
+  padding:15px;
+}
+.member-card strong{display:block}
+.member-card small{display:block;color:var(--muted);margin-top:3px}
+.member-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.btn{
+  border:1px solid #303945;
+  background:#171c23;
+  color:var(--text);
+  border-radius:10px;
+  padding:9px 12px;
+  font-weight:750;
+}
+.btn.gold{background:var(--gold);color:#111;border:0}
+.btn.danger{color:#ff9292;border-color:#55252a;background:#291417}
+.btn.small{font-size:11px;padding:7px 9px}
+.rotation{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:11px;
+}
+.rotation-card{
+  background:#11161d;
+  border:1px solid #29323d;
+  border-radius:15px;
+  padding:15px;
+}
+.rotation-card .num{color:var(--gold);font-size:11px;font-weight:900}
+.rotation-card strong{display:block;margin:6px 0}
+.empty{
+  text-align:center;
+  padding:38px 15px;
+  color:var(--muted);
+}
+.empty strong{display:block;color:var(--text);font-size:16px;margin-bottom:5px}
+
+/* ---------- MODAL ---------- */
+.modal-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.76);
+  z-index:200;
+  padding:18px;
+  align-items:center;
+  justify-content:center;
+}
+.modal-backdrop.show{display:flex}
+.modal{
+  width:min(680px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#11161d;
+  border:1px solid #35404c;
+  border-radius:20px;
+  padding:21px;
+}
+.modal h2{margin:0 0 7px}
+.modal p{color:var(--muted);font-size:13px;line-height:1.5}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
+.field.full{grid-column:1/-1}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.create-row{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-bottom:8px}
+
+/* ---------- FLOATING AI ---------- */
+.ai-fab{
+  position:fixed;
+  right:19px;
+  bottom:20px;
+  z-index:80;
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  border:4px solid #10151b;
+  background:var(--gold);
+  color:#111;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  display:grid;
+  place-items:center;
+  font-weight:950;
+  line-height:1;
+}
+.ai-fab .bot{font-size:29px;display:block}
+.ai-fab small{font-size:9px;display:block;margin-top:2px}
+.online-dot{
+  position:absolute;
+  width:13px;height:13px;
+  right:0;top:3px;
+  background:#53df8c;
+  border:2px solid #111;
+  border-radius:50%;
+}
+.ai-chat{
+  position:fixed;
+  right:18px;
+  bottom:105px;
+  width:min(370px,calc(100vw - 36px));
+  background:#11161d;
+  border:1px solid #35404c;
+  border-radius:18px;
+  z-index:85;
+  display:none;
+  overflow:hidden;
+  box-shadow:0 20px 55px rgba(0,0,0,.55);
+}
+.ai-chat.show{display:block}
+.ai-head{padding:13px 15px;background:#171d24;display:flex;justify-content:space-between}
+.ai-body{max-height:280px;overflow:auto;padding:12px}
+.ai-message{background:#1a2028;padding:10px 12px;border-radius:11px;margin-bottom:8px;font-size:12px;line-height:1.45}
+.ai-message.user{background:#2c2613;margin-left:25px}
+.ai-input{display:flex;gap:7px;padding:9px;border-top:1px solid #29323d}
+.ai-input .input{flex:1}
+
+/* ---------- FOOTER ---------- */
+.footer{
+  text-align:center;
+  color:#6d7580;
+  font-size:11px;
+  padding:25px 0 10px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:850px){
+  .app{padding:14px 18px 32px}
+  .header{margin-bottom:22px}
+  .hero{min-height:300px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+  .cards,.rotation{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .app{padding:10px 14px 30px}
+  .header{height:64px;margin-bottom:18px}
+  .logo-mark{width:47px;height:47px;border-radius:13px}
+  .logo-text{font-size:20px}
+  .hamburger{width:49px;height:49px}
+  .hero{min-height:300px;border-radius:22px;padding:34px 17px}
+  .hero-crown{font-size:38px}
+  .hero h1{font-size:32px}
+  .hero p{font-size:16px}
+  .primary{padding:13px 20px}
+  .section-nav{gap:2px;margin:25px -3px 30px}
+  .circle{width:58px;height:58px;font-size:22px;margin-bottom:6px}
+  .nav-label{font-size:10px}
+  .get-started,.content-card,.empty-card{padding:20px;border-radius:19px}
+  .get-grid{gap:9px}
+  .start-card{min-height:116px;padding:15px 7px}
+  .start-icon{font-size:26px}
+  .start-card strong{font-size:13px}
+  .start-card span{font-size:10px}
+  .empty-card{min-height:205px}
+  .empty-card h2{font-size:21px}
+  .empty-card p{font-size:14px;padding-right:35px}
+  .bee-float{width:72px;height:72px;font-size:32px;right:13px;bottom:13px}
+  .stats{gap:8px}
+  .stat{padding:13px}
+  .stat strong{font-size:20px}
+  .stat small{font-size:9px}
+  .cards,.rotation{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .create-row{grid-template-columns:1fr 1fr auto}
+  .ai-fab{width:68px;height:68px;right:14px;bottom:15px}
+}
+</style>
+
+<!-- AI intentionally omitted from launch build. Voice accessibility can be added later. -->
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<!-- HAMBURGER DRAWER -->
+<aside class="drawer" id="drawer">
+  <div class="drawer-top">
+    <div class="drawer-title">StokvelBoss</div>
+    <button class="close-menu" onclick="closeDrawer()">×</button>
+  </div>
+
+  <button class="drawer-item gold" onclick="closeDrawer();openCreateStokvel()">
+    <span class="drawer-icon">＋</span><span>Create Stokvel</span>
+  </button>
+  <button class="drawer-item" onclick="closeDrawer();openSettings()">
+    <span class="drawer-icon">⚙</span><span>Stokvel Settings</span>
+  </button>
+
+  <div class="drawer-rule"></div>
+
+  <button class="drawer-item" onclick="closeDrawer();showSection('reports')">
+    <span class="drawer-icon">▤</span><span>Reports & Ledger</span>
+  </button>
+  <button class="drawer-item" onclick="closeDrawer();openHelp()">
+    <span class="drawer-icon">?</span><span>Help & Guides</span>
+  </button>
+  <button class="drawer-item" onclick="closeDrawer();showPage('privacyPage')">
+    <span class="drawer-icon">♢</span><span>Privacy Policy</span>
+  </button>
+  <button class="drawer-item" onclick="closeDrawer();showPage('termsPage')">
+    <span class="drawer-icon">▤</span><span>Terms of Service</span>
+  </button>
+  <button class="drawer-item" onclick="closeDrawer();openFeedback()">
+    <span class="drawer-icon">□</span><span>Feedback</span>
+  </button>
+  <button class="drawer-item" onclick="closeDrawer();openAbout()">
+    <span class="drawer-icon">ⓘ</span><span>About StokvelBoss</span>
+  </button>
+
+  <div class="drawer-note">
+    StokvelBoss is currently in beta. Your dashboard data is stored locally in this browser.
+  </div>
+</aside>
+
+<!-- MAIN APP -->
+<main class="app" id="app">
+  <header class="header">
+    <button class="hamburger" aria-label="Open menu" onclick="openDrawer()">
+      <span class="hamburger-lines"><i></i><i></i><i></i></span>
+    </button>
+
+    <!-- Logo IS the home link -->
+    <a class="logo-link" onclick="goHome()" aria-label="StokvelBoss home">
+      <div class="logo-mark">SB</div>
+      <div class="logo-text">Stokvel<span>Boss</span></div>
+    </a>
+  </header>
+
+  <!-- WELCOME -->
+  <section class="hero" id="welcomeHero">
+    <div class="hero-inner">
+      <div class="hero-crown">♛</div>
+      <h1 id="heroTitle">Welcome to StokvelBoss 👋</h1>
+      <p id="heroText">Create your first stokvel to start tracking contributions, members and payouts.</p>
+      <button class="primary" onclick="openCreateStokvel()">＋ &nbsp;Create Stokvel</button>
+    </div>
+  </section>
+
+  <!-- FIVE CIRCULAR NAV BUTTONS — ALWAYS ONE LINE -->
+  <nav class="section-nav" aria-label="Dashboard">
+    <button class="nav-circle active" data-section="overview" onclick="showSection('overview')">
+      <span class="circle">⌂</span><span class="nav-label">Overview</span>
+    </button>
+    <button class="nav-circle" data-section="contributions" onclick="showSection('contributions')">
+      <span class="circle">◎</span><span class="nav-label">Contributions</span>
+    </button>
+    <button class="nav-circle" data-section="members" onclick="showSection('members')">
+      <span class="circle">♙</span><span class="nav-label">Members</span>
+    </button>
+    <button class="nav-circle" data-section="payouts" onclick="showSection('payouts')">
+      <span class="circle">▣</span><span class="nav-label">Payouts</span>
+    </button>
+    <button class="nav-circle" data-section="reports" onclick="showSection('reports')">
+      <span class="circle">▥</span><span class="nav-label">Reports</span>
+    </button>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section class="section active" id="overview">
+    <div id="emptyOverview">
+      <div class="get-started">
+        <div class="card-heading">
+          <h2>Get started</h2>
+          <p>Set up your stokvel and keep everything organised.</p>
+        </div>
+        <div class="get-grid">
+          <button class="start-card" onclick="openMemberModal()">
+            <div class="start-icon">♙+</div>
+            <strong>Add members</strong>
+            <span>Grow your stokvel</span>
+          </button>
+          <button class="start-card" onclick="openContributionModal()">
+            <div class="start-icon">◎</div>
+            <strong>Record contributions</strong>
+            <span>Track who's paid</span>
+          </button>
+          <button class="start-card" onclick="showSection('payouts')">
+            <div class="start-icon">▣</div>
+            <strong>Manage payouts</strong>
+            <span>Keep rotation fair</span>
+          </button>
+          <button class="start-card" onclick="showSection('reports')">
+            <div class="start-icon">▥</div>
+            <strong>View reports</strong>
+            <span>Share updates easily</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="empty-card">
+        <h2>No stokvels yet</h2>
+        <p>Create your first stokvel to unlock the full power of StokvelBoss.</p>
+        <button class="primary" onclick="openCreateStokvel()">＋ &nbsp;Create Stokvel</button>
+    </div>
+
+    <div id="realOverview" class="hidden">
+      <div class="content-card">
+        <div class="section-head">
+          <div>
+            <h2 id="stokvelName"></h2>
+            <p id="stokvelMeta"></p>
+          </div>
+          <button class="btn gold" onclick="openContributionModal()">＋ Record Payment</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><small>Total collected</small><strong id="sCollected">R0</strong><span id="sExpected"></span></div>
+          <div class="stat"><small>Paid this month</small><strong id="sPaid">0/0</strong><span id="sOwing"></span></div>
+          <div class="stat"><small>Next payout</small><strong id="sNext">—</strong><span id="sNextDate"></span></div>
+          <div class="stat"><small>Avg contribution</small><strong id="sAvg">R0</strong><span>per member</span></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Collection progress</h3>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span id="progressText"></span><span id="progressPct"></span></div>
+            <div class="progress"><span id="progressBar"></span></div>
+            <div class="pills" id="owingPills"></div>
+          </div>
+          <div class="panel">
+            <h3>Quick actions</h3>
+            <div class="actions">
+              <button class="btn gold" onclick="openMemberModal()">＋ Add Member</button>
+              <button class="btn" onclick="sendReport()">WhatsApp Report</button>
+              <button class="btn" onclick="downloadCSV()">Export Ledger</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTRIBUTIONS -->
+  <section class="section" id="contributions">
+    <div class="content-card">
+      <div class="section-head">
+        <div><h2>Contributions</h2><p>Track every member's payment.</p></div>
+        <button class="btn gold" onclick="openContributionModal()">＋ Record Payment</button>
+      </div>
+      <div id="emptyContrib" class="empty">Create a stokvel and add members to start recording contributions.</div>
+      <div id="realContrib" class="hidden">
+        <div class="toolbar">
+          <input class="input search" id="contribSearch" placeholder="Search member..." oninput="renderContributions()">
+          <span class="pill">Auto-reminders: ON</span>
+        </div>
+        <div class="mobile-table">
+          <table><thead><tr><th>Member</th><th>Amount</th><th>Status</th><th>Last paid</th><th></th></tr></thead><tbody id="contribRows"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERS -->
+  <section class="section" id="members">
+    <div class="content-card">
+      <div class="section-head">
+        <div><h2>Members</h2><p>Manage the people in your stokvel.</p></div>
+        <button class="btn gold" onclick="openMemberModal()">＋ Add Member</button>
+      </div>
+      <div id="emptyMembers" class="empty">No members yet. Add your first member.</div>
+      <div id="realMembers" class="hidden">
+        <div class="toolbar"><input class="input search" id="memberSearch" placeholder="Search name or phone..." oninput="renderMembers()"></div>
+        <div class="cards" id="memberCards"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYOUTS -->
+  <section class="section" id="payouts">
+    <div class="content-card">
+      <div class="section-head">
+        <div><h2>Payout Rotation</h2><p>Keep the payout order organised.</p></div>
+        <button class="btn" onclick="openRotationModal()">Edit Rotation</button>
+      </div>
+      <div id="emptyPayouts" class="empty">Add members to create your payout rotation.</div>
+      <div id="realPayouts" class="hidden">
+        <div class="rotation" id="rotationGrid"></div>
+        <div class="panel" style="margin-top:14px">
+          <h3>Payout history</h3>
+          <div class="mobile-table"><table><thead><tr><th>Date</th><th>Member</th><th>Amount</th><th>Status</th></tr></thead><tbody id="payoutRows"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORTS -->
+  <section class="section" id="reports">
+    <div class="content-card">
+      <div class="section-head">
+        <div><h2>Reports & Ledger</h2><p>Export statements and share updates with your group.</p></div>
+      </div>
+      <div id="emptyReports" class="empty">Create a stokvel and record some activity before generating reports.</div>
+      <div id="realReports" class="hidden">
+        <div class="two-col">
+          <div class="panel">
+            <h3>Monthly report</h3>
+            <p class="muted">Generate a printable statement or share an update with the group.</p>
+            <div class="actions">
+              <button class="btn gold" onclick="printStatement()">Print / Save PDF</button>
+              <button class="btn" onclick="sendReport()">WhatsApp Report</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Data</h3>
+            <div class="actions">
+              <button class="btn" onclick="downloadCSV()">Download Ledger CSV</button>
+              <button class="btn" onclick="clearData()">Delete Stokvel Data</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>Transaction ledger</h3>
+          <div class="mobile-table"><table><thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead><tbody id="ledgerRows"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">© 2026 StokvelBoss · Built for SA stokvels 🇿🇦</footer>
+</main>
+  
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="modalBackdrop(event)">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- SIMPLE LEGAL / INFO PAGES -->
+<div id="infoPage" style="display:none"></div>
+
+<script>
+const KEY="stokvelboss_v3";
+let db=load();
+
+function fresh(){return{stokvel:null,members:[],payments:[],payouts:[]}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){return fresh()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function money(n){return"R"+Number(n||0).toLocaleString("en-ZA")}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function today(){return new Date().toISOString().slice(0,10)}
+function prettyDate(d){return d?new Date(d+"T00:00:00").toLocaleDateString("en-ZA",{day:"2-digit",month:"short",year:"numeric"}):"—"}
+function currentMonth(){return today().slice(0,7)}
+function monthLabel(){return new Date().toLocaleDateString("en-ZA",{month:"long",year:"numeric"})}
+function getMember(id){return db.members.find(m=>m.id===id)}
+function paymentsFor(id){return db.payments.filter(p=>p.memberId===id&&p.date.startsWith(currentMonth()))}
+function paid(id){return paymentsFor(id).reduce((a,p)=>a+Number(p.amount),0)>=Number(db.stokvel?.contribution||0)}
+function collected(){return db.payments.filter(p=>p.date.startsWith(currentMonth())).reduce((a,p)=>a+Number(p.amount),0)}
+function expected(){return db.members.length*Number(db.stokvel?.contribution||0)}
+function owing(){return db.members.filter(m=>!paid(m.id))}
+function payoutTotal(){return db.members.length*Number(db.stokvel?.contribution||0)}
+function nextMember(){return [...db.members].sort((a,b)=>(a.payoutIndex??0)-(b.payoutIndex??0))[0]||null}
+
+function openDrawer(){document.getElementById("drawer").classList.add("open");document.getElementById("overlay").classList.add("show")}
+function closeDrawer(){document.getElementById("drawer").classList.remove("open");document.getElementById("overlay").classList.remove("show")}
+function goHome(){showSection("overview");window.scrollTo({top:0,behavior:"smooth"})}
+
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".nav-circle").forEach(n=>n.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelector(`[data-section="${id}"]`)?.classList.add("active");
+  if(id==="overview")window.scrollTo({top:0,behavior:"smooth"});
+}
+function openModal(html){document.getElementById("modal").innerHTML=html;document.getElementById("modalBackdrop").classList.add("show")}
+function closeModal(){document.getElementById("modalBackdrop").classList.remove("show")}
+function modalBackdrop(e){if(e.target.id==="modalBackdrop")closeModal()}
+
+function render(){
+  const has=!!db.stokvel, members=db.members.length;
+  document.getElementById("emptyOverview").classList.toggle("hidden",has);
+  document.getElementById("realOverview").classList.toggle("hidden",!has);
+  document.getElementById("emptyContrib").classList.toggle("hidden",has&&members);
+  document.getElementById("realContrib").classList.toggle("hidden",!(has&&members));
+  document.getElementById("emptyMembers").classList.toggle("hidden",!!members);
+  document.getElementById("realMembers").classList.toggle("hidden",!members);
+  document.getElementById("emptyPayouts").classList.toggle("hidden",!!members);
+  document.getElementById("realPayouts").classList.toggle("hidden",!members);
+  document.getElementById("emptyReports").classList.toggle("hidden",has&&members);
+  document.getElementById("realReports").classList.toggle("hidden",!(has&&members));
+  if(has){
+    document.getElementById("heroTitle").textContent=db.stokvel.name;
+    document.getElementById("heroText").textContent=`${money(db.stokvel.contribution)} / ${db.stokvel.frequency.toLowerCase()} · ${members} member${members===1?"":"s"} · Next payout ${prettyDate(db.stokvel.nextPayoutDate)}`;
+  }else{
+    document.getElementById("heroTitle").textContent="Welcome to StokvelBoss 👋";
+    document.getElementById("heroText").textContent="Create your first stokvel to start tracking contributions, members and payouts.";
+  }
+  renderOverview();renderContributions();renderMembers();renderPayouts();renderLedger();
+}
+
+function renderOverview(){
+  if(!db.stokvel)return;
+  const col=collected(),exp=expected(),out=owing(),next=nextMember(),pct=exp?Math.min(100,Math.round(col/exp*100)):0;
+  document.getElementById("stokvelName").textContent=db.stokvel.name;
+  document.getElementById("stokvelMeta").textContent=`${money(db.stokvel.contribution)}/${db.stokvel.frequency.toLowerCase()} · ${db.members.length} members · ${monthLabel()}`;
+  document.getElementById("sCollected").textContent=money(col);
+  document.getElementById("sExpected").textContent=`of ${money(exp)} expected`;
+  document.getElementById("sPaid").textContent=`${db.members.length-out.length}/${db.members.length}`;
+  document.getElementById("sOwing").textContent=`${out.length} outstanding`;
+  document.getElementById("sNext").textContent=next?next.name.split(" ")[0]:"—";
+  document.getElementById("sNextDate").textContent=next?`${money(payoutTotal())} · ${prettyDate(db.stokvel.nextPayoutDate)}`:"";
+  document.getElementById("sAvg").textContent=money(db.members.length?Math.round(col/db.members.length):0);
+  document.getElementById("progressText").textContent=`${money(col)} collected`;
+  document.getElementById("progressPct").textContent=pct+"%";
+  document.getElementById("progressBar").style.width=pct+"%";
+  document.getElementById("owingPills").innerHTML=out.length?out.map(m=>`<span class="pill">${esc(m.name.split(" ")[0])} · ${money(db.stokvel.contribution)}</span>`).join(""):`<span style="color:var(--ok);font-size:12px">✓ Everyone has paid this month.</span>`;
+}
+
+function renderContributions(){
+  if(!db.members.length)return;
+  const q=(document.getElementById("contribSearch")?.value||"").toLowerCase();
+  document.getElementById("contribRows").innerHTML=db.members.filter(m=>m.name.toLowerCase().includes(q)||m.phone.toLowerCase().includes(q)).map(m=>{
+    const ps=paymentsFor(m.id),amount=ps.reduce((a,p)=>a+Number(p.amount),0),last=[...ps].sort((a,b)=>b.date.localeCompare(a.date))[0],ok=amount>=db.stokvel.contribution;
+    return `<tr><td><b>${esc(m.name)}</b></td><td>${money(amount)}</td><td><span class="badge ${ok?"paid":"unpaid"}">${ok?"Paid":"Unpaid"}</span></td><td>${prettyDate(last?.date)}</td><td>${ok?`<button class="btn small" onclick="openPayment('${m.id}')">Add</button>`:`<button class="btn gold small" onclick="remind('${m.id}')">Remind</button>`}</td></tr>`;
+  }).join("");
+}
+
+function renderMembers(){
+  if(!db.members.length)return;
+  const q=(document.getElementById("memberSearch")?.value||"").toLowerCase();
+  document.getElementById("memberCards").innerHTML=db.members.filter(m=>m.name.toLowerCase().includes(q)||m.phone.toLowerCase().includes(q)).map(m=>{
+    const total=db.payments.filter(p=>p.memberId===m.id).reduce((a,p)=>a+Number(p.amount),0);
+    const mp=paymentsFor(m.id).reduce((a,p)=>a+Number(p.amount),0);
+    return `<div class="member-card"><strong>${esc(m.name)}</strong><small>${esc(m.phone)}</small><div style="margin-top:12px;font-size:12px">Total contributed: <b>${money(total)}</b></div><div style="font-size:12px;margin-top:3px">This month: <b>${paid(m.id)?"Paid":money(Math.max(0,db.stokvel.contribution-mp))+" owing"}</b></div><div class="member-actions"><button class="btn small" onclick="editMember('${m.id}')">Edit</button>${!paid(m.id)?`<button class="btn gold small" onclick="remind('${m.id}')">Remind</button>`:""}<button class="btn danger small" onclick="removeMember('${m.id}')">Remove</button></div></div>`;
+  }).join("");
+}
+
+function renderPayouts(){
+  if(!db.members.length)return;
+  const sorted=[...db.members].sort((a,b)=>(a.payoutIndex??0)-(b.payoutIndex??0));
+  document.getElementById("rotationGrid").innerHTML=sorted.map((m,i)=>`<div class="rotation-card"><div class="num">#${i+1}${i===0?" · NEXT":""}</div><strong>${esc(m.name)}</strong><span class="muted" style="font-size:12px">${money(payoutTotal())} payout</span></div>`).join("");
+  document.getElementById("payoutRows").innerHTML=db.payouts.length?[...db.payouts].reverse().map(p=>`<tr><td>${prettyDate(p.date)}</td><td>${esc(getMember(p.memberId)?.name||"Unknown")}</td><td>${money(p.amount)}</td><td><span class="badge paid">Paid</span></td></tr>`).join(""):`<tr><td colspan="4" class="empty">No payouts recorded yet.</td></tr>`;
+}
+
+function renderLedger(){
+  if(!db.members.length)return;
+  document.getElementById("ledgerRows").innerHTML=db.payments.length?[...db.payments].sort((a,b)=>b.date.localeCompare(a.date)).map(p=>`<tr><td>${prettyDate(p.date)}</td><td>${esc(getMember(p.memberId)?.name||"Unknown")}</td><td>Contribution</td><td>${money(p.amount)}</td><td>${esc(p.note||"")}</td></tr>`).join(""):`<tr><td colspan="5" class="empty">No transactions yet.</td></tr>`;
+}
+
+function openCreateStokvel(){
+  openModal(`
+    <h2>Create your stokvel</h2>
+    <p>No demo data. What you enter here becomes your real local dashboard.</p>
+    <div class="form-grid">
+      <div class="field full"><label>Stokvel name</label><input id="cName" class="input" placeholder="e.g. Ubuntu Savings"></div>
+      <div class="field"><label>Contribution (R)</label><input id="cAmount" type="number" min="1" class="input" placeholder="500"></div>
+      <div class="field"><label>Frequency</label><select id="cFreq" class="select"><option>Monthly</option><option>Weekly</option></select></div>
+      <div class="field"><label>Next payout date</label><input id="cDate" type="date" class="input"></div>
+      <div class="field"><label>WhatsApp reminders</label><select id="cReminder" class="select"><option>ON</option><option>OFF</option></select></div>
+      <div class="field full"><label>Members <span class="muted">(optional — you can add them later)</span></label><div id="memberRows"></div><button class="btn small" onclick="addMemberRow()">＋ Add member</button></div>
+    </div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn gold" onclick="createStokvel()">Create Stokvel</button></div>
+  `);
+}
+function addMemberRow(){
+  document.getElementById("memberRows").insertAdjacentHTML("beforeend",`<div class="create-row"><input class="input new-name" placeholder="Full name"><input class="input new-phone" placeholder="WhatsApp number"><button class="btn danger small" onclick="this.parentElement.remove()">×</button></div>`);
+}
+function createStokvel(){
+  const name=document.getElementById("cName").value.trim(),amount=Number(document.getElementById("cAmount").value),frequency=document.getElementById("cFreq").value,date=document.getElementById("cDate").value;
+  if(!name||!amount||!date){alert("Please complete the stokvel name, contribution and payout date.");return}
+  const names=[...document.querySelectorAll(".new-name")],phones=[...document.querySelectorAll(".new-phone")];
+  const members=[];
+  names.forEach((n,i)=>{if(n.value.trim())members.push({id:"m"+Date.now()+i,name:n.value.trim(),phone:(phones[i]?.value||"").trim()||"—",joined:today(),payoutIndex:i})});
+  db={stokvel:{name,contribution:amount,frequency,nextPayoutDate:date,autoReminders:document.getElementById("cReminder").value==="ON"},members,payments:[],payouts:[]};
+  save();closeModal();showSection("overview");
+}
+
+function openMemberModal(){if(!db.stokvel){openCreateStokvel();return}editMember()}
+function editMember(id=""){
+  const m=id?getMember(id):null;
+  openModal(`
+    <h2>${m?"Edit member":"Add member"}</h2>
+    <div class="form-grid">
+      <div class="field full"><label>Full name</label><input id="mName" class="input" value="${esc(m?.name||"")}"></div>
+      <div class="field"><label>WhatsApp / phone</label><input id="mPhone" class="input" value="${esc(m?.phone||"")}"></div>
+      <div class="field"><label>Joined date</label><input id="mDate" type="date" class="input" value="${m?.joined||today()}"></div>
+    </div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn gold" onclick="saveMember('${id}')">Save Member</button></div>
+  `);
+}
+function saveMember(id){
+  const name=document.getElementById("mName").value.trim(),phone=document.getElementById("mPhone").value.trim(),joined=document.getElementById("mDate").value;
+  if(!name||!phone){alert("Please enter a name and phone number.");return}
+  if(id)Object.assign(getMember(id),{name,phone,joined});
+  else db.members.push({id:"m"+Date.now(),name,phone,joined,payoutIndex:db.members.length});
+  save();closeModal();
+}
+function removeMember(id){
+  const m=getMember(id);if(!m||!confirm(`Remove ${m.name}?`))return;
+  db.members=db.members.filter(x=>x.id!==id);
+  db.members.forEach((x,i)=>x.payoutIndex=i);
+  save();
+}
+
+function openContributionModal(){openPayment()}
+function openPayment(prefill=""){
+  if(!db.stokvel){openCreateStokvel();return}
+  if(!db.members.length){alert("Add a member first.");return}
+  openModal(`
+    <h2>Record contribution</h2>
+    <div class="form-grid">
+      <div class="field full"><label>Member</label><select id="pMember" class="select">${db.members.map(m=>`<option value="${m.id}" ${m.id===prefill?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div>
+      <div class="field"><label>Amount (R)</label><input id="pAmount" type="number" class="input" value="${db.stokvel.contribution}"></div>
+      <div class="field"><label>Date</label><input id="pDate" type="date" class="input" value="${today()}"></div>
+      <div class="field full"><label>Note</label><input id="pNote" class="input" placeholder="Optional note"></div>
+    </div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn gold" onclick="savePayment()">Record Payment</button></div>
+  `);
+}
+function savePayment(){
+  const memberId=document.getElementById("pMember").value,amount=Number(document.getElementById("pAmount").value),date=document.getElementById("pDate").value,note=document.getElementById("pNote").value.trim();
+  if(!amount||!date){alert("Enter an amount and date.");return}
+  db.payments.push({id:"p"+Date.now(),memberId,amount,date,note});
+  save();closeModal();
+}
+
+function remind(id){
+  const m=getMember(id);if(!m)return;
+  const paidNow=paymentsFor(id).reduce((a,p)=>a+Number(p.amount),0);
+  const due=Math.max(0,Number(db.stokvel.contribution)-paidNow);
+  const msg=`Hi ${m.name.split(" ")[0]} 👋 Your ${monthLabel()} contribution for ${db.stokvel.name} is ${money(due)} outstanding. Please make payment when you can. Thank you ❤️`;
+  const phone=m.phone.replace(/\D/g,"");
+  window.open(phone?`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`,"_blank");
+}
+function sendReport(){
+  if(!db.stokvel)return;
+  const out=owing(),next=nextMember();
+  const msg=`📊 ${db.stokvel.name} — ${monthLabel()}\n\nCollected: ${money(collected())} of ${money(expected())}\nPaid: ${db.members.length-out.length}/${db.members.length}\nOutstanding: ${out.length}\nNext payout: ${next?.name||"—"} — ${money(payoutTotal())}\n\nSent via StokvelBoss.`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,"_blank");
+}
+
+function openRotationModal(){
+  if(!db.members.length){alert("Add members first.");return}
+  const sorted=[...db.members].sort((a,b)=>(a.payoutIndex??0)-(b.payoutIndex??0));
+  openModal(`<h2>Edit payout rotation</h2><p>Set the order in which members receive payouts.</p><div>${sorted.map((m,i)=>`<div style="display:grid;grid-template-columns:45px 1fr;gap:8px;margin-bottom:8px"><b>#${i+1}</b><select class="select rotation-select" data-id="${m.id}">${sorted.map(x=>`<option value="${x.id}" ${x.id===m.id?"selected":""}>${esc(x.name)}</option>`).join("")}</select></div>`).join("")}</div><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn gold" onclick="saveRotation()">Save Rotation</button></div>`);
+}
+function saveRotation(){
+  const ids=[...document.querySelectorAll(".rotation-select")].map(s=>s.value);
+  if(new Set(ids).size!==ids.length){alert("Each member can only appear once.");return}
+  ids.forEach((id,i)=>getMember(id).payoutIndex=i);
+  save();closeModal();
+}
+
+function openSettings(){
+  if(!db.stokvel){openCreateStokvel();return}
+  openModal(`<h2>Stokvel Settings</h2><div class="form-grid">
+  <div class="field full"><label>Stokvel name</label><input id="setName" class="input" value="${esc(db.stokvel.name)}"></div>
+  <div class="field"><label>Contribution (R)</label><input id="setAmount" type="number" class="input" value="${db.stokvel.contribution}"></div>
+  <div class="field"><label>Frequency</label><select id="setFreq" class="select"><option ${db.stokvel.frequency==="Monthly"?"selected":""}>Monthly</option><option ${db.stokvel.frequency==="Weekly"?"selected":""}>Weekly</option></select></div>
+  <div class="field"><label>Next payout date</label><input id="setDate" type="date" class="input" value="${db.stokvel.nextPayoutDate}"></div>
+  </div><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn gold" onclick="saveSettings()">Save</button></div>`);
+}
+function saveSettings(){
+  db.stokvel.name=document.getElementById("setName").value.trim()||db.stokvel.name;
+  db.stokvel.contribution=Number(document.getElementById("setAmount").value)||db.stokvel.contribution;
+  db.stokvel.frequency=document.getElementById("setFreq").value;
+  db.stokvel.nextPayoutDate=document.getElementById("setDate").value;
+  save();closeModal();
+}
+
+function printStatement(){
+  if(!db.stokvel)return;
+  const rows=db.members.map(m=>`<tr><td>${esc(m.name)}</td><td>${paid(m.id)?"Paid":"Outstanding"}</td><td>${money(paymentsFor(m.id).reduce((a,p)=>a+Number(p.amount),0))}</td></tr>`).join("");
+  const w=window.open("","_blank");
+  w.document.write(`<html><head><title>${esc(db.stokvel.name)} Statement</title><style>body{font-family:Arial;padding:40px;color:#111}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}</style></head><body><h1>${esc(db.stokvel.name)}</h1><p>${monthLabel()} Statement</p><h2>${money(collected())} collected of ${money(expected())}</h2><table><tr><th>Member</th><th>Status</th><th>Paid</th></tr>${rows}</table></body></html>`);
+  w.document.close();w.print();
+}
+function downloadCSV(){
+  if(!db.payments.length){alert("No payments to export yet.");return}
+  const rows=[["Date","Member","Type","Amount","Note"],...db.payments.map(p=>[p.date,getMember(p.memberId)?.name||"","Contribution",p.amount,p.note||""])];
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="stokvelboss-ledger.csv";a.click();
+}
+function clearData(){
+  if(!confirm("Delete this stokvel and all local records? This cannot be undone."))return;
+  localStorage.removeItem(KEY);db=fresh();render();showSection("overview");
+}
+
+</div>`);
+  let ans;
+  if(!db.stokvel)ans="You don't have a stokvel yet. Create one and I'll have something to work with.";
+  else if(q.includes("owing")||q.includes("outstanding")){const o=owing();ans=o.length?`${o.map(m=>m.name).join(", ")} ${o.length===1?"is":"are"} still owing this month.`:"Nobody is owing. 🎉"}
+  else if(q.includes("next")&&q.includes("payout"))ans=`${nextMember()?.name||"Nobody"} is next for ${money(payoutTotal())}.`;
+  else if(q.includes("collect")||q.includes("how much"))ans=`You've collected ${money(collected())} of ${money(expected())} this month.`;
+  else if(q.includes("member"))ans=`You have ${db.members.length} member${db.members.length===1?"":"s"}.`;
+  else ans="Try asking “Who is owing?”, “Who's next for payout?”, “How much have we collected?” or “How many members do we have?”";
+  setTimeout(()=>{body.insertAdjacentHTML("beforeend",`<div class="ai-message">${esc(ans)}</div>`);body.scrollTop=body.scrollHeight},120);
+  input.value="";
+}
+
+function openHelp(){
+  openModal(`<h2>Help & Guides</h2>
+  <p><b>1. Create your stokvel</b><br>Enter the name, contribution amount, frequency and next payout date.</p>
+  <p><b>2. Add members</b><br>Add members from the Members section or while creating the stokvel.</p>
+  <p><b>3. Record payments</b><br>Use Contributions → Record Payment whenever someone pays.</p>
+  <p><b>4. Remind members</b><br>Unpaid members get a WhatsApp reminder button. Review the message before sending.</p>
+  <p><b>5. Manage payouts</b><br>Edit the payout rotation whenever your group agrees to a new order.</p>
+  <div class="modal-actions"><button class="btn gold" onclick="closeModal()">Got it</button></div>`);
+}
+function openAbout(){
+  openModal(`<h2>About StokvelBoss</h2><p>StokvelBoss is a simple management tool designed to help South African stokvels keep contributions, members, payouts and reports organised.</p><p><b>Beta:</b> This version stores data locally in your browser. It does not hold or transfer your money.</p><div class="modal-actions"><button class="btn gold" onclick="closeModal()">Close</button></div>`);
+}
+function openFeedback(){
+  openModal(`<h2>💬 Help shape StokvelBoss</h2><p>Tell us what works, what sucks, or what you want next.</p><div class="field"><label>Your name (optional)</label><input id="fbName" class="input"></div><div class="field" style="margin-top:12px"><label>Feedback</label><textarea id="fbText" class="textarea" placeholder="Your feedback..."></textarea></div><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn gold" onclick="submitFeedback()">Send Feedback</button></div>`);
+}
+function submitFeedback(){
+  const text=document.getElementById("fbText").value.trim(),name=document.getElementById("fbName").value.trim()||"Beta tester";
+  if(!text){alert("Please add some feedback.");return}
+  window.location.href=`mailto:hello@stokvelboss.co.za?subject=${encodeURIComponent("StokvelBoss Beta Feedback")}&body=${encodeURIComponent("Name: "+name+"\n\n"+text)}`;
+  closeModal();
+}
+function showPage(type){
+  const content=type==="privacyPage"
+    ?`<h2>Privacy Policy</h2><p>StokvelBoss is currently a beta product. Information entered into this browser-based beta is stored locally on your device.</p><p>This may include stokvel names, member names, phone numbers, contribution amounts, payment records and payout information.</p><p>WhatsApp actions open WhatsApp with a message for you to review before sending. WhatsApp's own privacy terms apply.</p>`
+    :`<h2>Terms of Service</h2><p>StokvelBoss is an early beta product and features may change while it is being developed.</p><p>StokvelBoss is a record-keeping tool. It does not hold money or process contributions. Users remain responsible for checking records against actual payments.</p>`;
+  openModal(content+`<div class="modal-actions"><button class="btn gold" onclick="closeModal()">Close</button></div>`);
+}
+render();
+</script>
+</body>
+</html>
+
